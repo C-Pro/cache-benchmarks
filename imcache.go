@@ -8,13 +8,16 @@ import (
 )
 
 type IMCache[K comparable, V any] struct {
-	c *imcache.Cache[K, V]
+	c *imcache.Sharded[K, V]
 }
 
 func NewIMCache[K comparable, V any](
 	ttl time.Duration,
+	hasher imcache.Hasher64[K],
 ) *IMCache[K, V] {
-	c := imcache.New(
+	c := imcache.NewSharded(
+		4, 
+		hasher,
 		imcache.WithDefaultExpirationOption[K, V](ttl),
 	)
 

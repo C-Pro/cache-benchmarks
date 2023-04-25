@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/c-pro/geche"
+	"github.com/erni27/imcache"
 )
 
 const keyCardinality = 1000000
@@ -96,7 +97,7 @@ func BenchmarkEverythingParallel(b *testing.B) {
 		},
 		{
 			"github.com/erni27/imcache",
-			NewIMCache[string, string](time.Second),
+			NewIMCache[string, string](time.Second, imcache.DefaultStringHasher64{}),
 		},
 		{
 			"github.com/dgraph-io/ristretto",

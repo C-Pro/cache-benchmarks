@@ -6,6 +6,8 @@ github.com/c-pro/geche v0.0.0-20230424080928-e9f60542a73a h1:X78NYtD3d+CoC+TEK1F
 github.com/c-pro/geche v0.0.0-20230424080928-e9f60542a73a/go.mod h1:ZgL4L6MQ0YGGC0wAgePwxKHakl7MoIX4SgVnP9jQ6mQ=
 github.com/c-pro/geche v0.0.0-20230424104737-42f0c84b810f h1:9Tf4lTdfV/dgHbqALCIXgA1JnkJG1fW+ggBF1+M+4y8=
 github.com/c-pro/geche v0.0.0-20230424104737-42f0c84b810f/go.mod h1:ZgL4L6MQ0YGGC0wAgePwxKHakl7MoIX4SgVnP9jQ6mQ=
+github.com/c-pro/geche v0.0.0-20230425071316-8afffb947e11 h1:Vb1kmHTP3pNk4xlyPhmOGBIDDxDg29T1eYppr5JbkBU=
+github.com/c-pro/geche v0.0.0-20230425071316-8afffb947e11/go.mod h1:ZgL4L6MQ0YGGC0wAgePwxKHakl7MoIX4SgVnP9jQ6mQ=
 github.com/cespare/xxhash/v2 v2.1.1 h1:6MnRN8NT7+YBpUIWxHtefFZOKTAPgGjpQSxqLNn0+qY=
 github.com/cespare/xxhash/v2 v2.1.1/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
