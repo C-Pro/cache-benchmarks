@@ -12,18 +12,51 @@ import (
 
 const keyCardinality = 1000000
 
-func benchmarkFuzzParallel(c geche.Geche[string, string], pb *testing.PB) {
-	for pb.Next() {
-		key := strconv.Itoa(rand.Intn(keyCardinality))
+type testCase struct {
+	key string
+	op  int
+}
+
+const (
+	OPGet = iota
+	OPSet
+	OPDel
+)
+
+func genTestData(N int) []testCase {
+	d := make([]testCase, N)
+	for i := range d {
+		d[i].key = strconv.Itoa(rand.Intn(keyCardinality))
 		r := rand.Float64()
 		switch {
 		case r < 0.9:
-			_, _ = c.Get(key)
+			d[i].op = OPGet
 		case r >= 0.9 && r < 0.95:
-			_ = c.Del(key)
+			d[i].op = OPSet
 		case r >= 0.95:
-			c.Set(key, "value")
+			d[i].op = OPDel
 		}
+	}
+
+	return d
+}
+
+func benchmarkFuzzParallel(
+	c geche.Geche[string, string],
+	testData []testCase,
+	pb *testing.PB,
+) {
+	i := 0
+	for pb.Next() {
+		switch testData[i].op {
+		case OPGet:
+			_, _ = c.Get(testData[i].key)
+		case OPSet:
+			c.Set(testData[i].key, "value")
+		case OPDel:
+			_ = c.Del(testData[i].key)
+		}
+		i = (i + 1) % len(testData)
 	}
 }
 
@@ -66,10 +99,12 @@ func BenchmarkEverythingParallel(b *testing.B) {
 			NewIMCache[string, string](time.Second),
 		},
 	}
+	data := genTestData(10000000)
+	b.ResetTimer()
 	for _, c := range tab {
 		b.Run(c.name, func(b *testing.B) {
 			b.RunParallel(func(pb *testing.PB) {
-				benchmarkFuzzParallel(c.imp, pb)
+				benchmarkFuzzParallel(c.imp, data, pb)
 			})
 		})
 	}
