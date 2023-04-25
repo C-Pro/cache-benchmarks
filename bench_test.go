@@ -80,7 +80,7 @@ func BenchmarkEverythingParallel(b *testing.B) {
 		},
 		{
 			"RingBuffer",
-			geche.NewRingBuffer[string, string](10000),
+			geche.NewRingBuffer[string, string](100000),
 		},
 		{
 			"github.com/Code-Hex/go-generics-cache",
@@ -88,18 +88,26 @@ func BenchmarkEverythingParallel(b *testing.B) {
 		},
 		{
 			"github.com/Yiling-J/theine-go",
-			NewTheine[string, string](10000, time.Second),
+			NewTheine[string, string](100000, time.Second),
 		},
 		{
 			"github.com/jellydator/ttlcache",
-			NewTTLCache[string, string](ctx, 10000, time.Second),
+			NewTTLCache[string, string](ctx, 100000, time.Second),
 		},
 		{
 			"github.com/erni27/imcache",
 			NewIMCache[string, string](time.Second),
 		},
+		{
+			"github.com/dgraph-io/ristretto",
+			NewRistretto[string, string](100000, time.Second),
+		},
+		{
+			"github.com/hashicorp/golang-lru/v2",
+			NewGLRU[string, string](100000),
+		},
 	}
-	data := genTestData(10000000)
+	data := genTestData(10_000_000)
 	b.ResetTimer()
 	for _, c := range tab {
 		b.Run(c.name, func(b *testing.B) {
