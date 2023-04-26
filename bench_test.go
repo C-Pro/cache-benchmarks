@@ -81,7 +81,33 @@ func BenchmarkEverythingParallel(b *testing.B) {
 		},
 		{
 			"RingBuffer",
-			geche.NewRingBuffer[string, string](100000),
+			geche.NewRingBuffer[string, string](1000000),
+		},
+		{
+			"ShardedMapCache",
+			geche.NewSharded[string](
+				func() geche.Geche[string, string] { return geche.NewMapCache[string, string]() },
+				8,
+				&geche.StringMapper{8},
+			),
+		},
+		{
+			"ShardedMapTTLCache",
+			geche.NewSharded[string](
+				func() geche.Geche[string, string] {
+					return geche.NewMapTTLCache[string, string](ctx, time.Second, time.Second)
+				},
+				8,
+				&geche.StringMapper{8},
+			),
+		},
+		{
+			"ShardedRingBuffer",
+			geche.NewSharded[string](
+				func() geche.Geche[string, string] { return geche.NewRingBuffer[string, string](100000) },
+				8,
+				&geche.StringMapper{8},
+			),
 		},
 		{
 			"github.com/Code-Hex/go-generics-cache",
@@ -89,11 +115,11 @@ func BenchmarkEverythingParallel(b *testing.B) {
 		},
 		{
 			"github.com/Yiling-J/theine-go",
-			NewTheine[string, string](100000, time.Second),
+			NewTheine[string, string](1000000, time.Second),
 		},
 		{
 			"github.com/jellydator/ttlcache",
-			NewTTLCache[string, string](ctx, 100000, time.Second),
+			NewTTLCache[string, string](ctx, 1000000, time.Second),
 		},
 		{
 			"github.com/erni27/imcache",
@@ -101,11 +127,11 @@ func BenchmarkEverythingParallel(b *testing.B) {
 		},
 		{
 			"github.com/dgraph-io/ristretto",
-			NewRistretto[string, string](100000, time.Second),
+			NewRistretto[string, string](1000000, time.Second),
 		},
 		{
 			"github.com/hashicorp/golang-lru/v2",
-			NewGLRU[string, string](100000),
+			NewGLRU[string, string](1000000),
 		},
 	}
 	data := genTestData(10_000_000)

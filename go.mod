@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/Code-Hex/go-generics-cache v1.3.0
-	github.com/c-pro/geche v0.0.0-20230425071316-8afffb947e11
+	github.com/c-pro/geche v0.0.0-20230426051439-edd48e1211c6
 )
 
 require (

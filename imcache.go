@@ -16,7 +16,7 @@ func NewIMCache[K comparable, V any](
 	hasher imcache.Hasher64[K],
 ) *IMCache[K, V] {
 	c := imcache.NewSharded(
-		4, 
+		8,
 		hasher,
 		imcache.WithDefaultExpirationOption[K, V](ttl),
 	)
