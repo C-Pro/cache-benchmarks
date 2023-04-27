@@ -2,7 +2,9 @@ package cache_bench
 
 import (
 	"context"
+	"math"
 	"math/rand"
+	"runtime"
 	"strconv"
 	"testing"
 	"time"
@@ -12,6 +14,8 @@ import (
 )
 
 const keyCardinality = 1000000
+
+var numShards = 1 << (int(math.Log2(float64(runtime.NumCPU()))) + 1)
 
 type testCase struct {
 	key string
@@ -87,8 +91,8 @@ func BenchmarkEverythingParallel(b *testing.B) {
 			"ShardedMapCache",
 			geche.NewSharded[string](
 				func() geche.Geche[string, string] { return geche.NewMapCache[string, string]() },
-				8,
-				&geche.StringMapper{8},
+				numShards,
+				&geche.StringMapper{N: numShards},
 			),
 		},
 		{
@@ -97,16 +101,16 @@ func BenchmarkEverythingParallel(b *testing.B) {
 				func() geche.Geche[string, string] {
 					return geche.NewMapTTLCache[string, string](ctx, time.Second, time.Second)
 				},
-				8,
-				&geche.StringMapper{8},
+				numShards,
+				&geche.StringMapper{N: numShards},
 			),
 		},
 		{
 			"ShardedRingBuffer",
 			geche.NewSharded[string](
-				func() geche.Geche[string, string] { return geche.NewRingBuffer[string, string](100000) },
-				8,
-				&geche.StringMapper{8},
+				func() geche.Geche[string, string] { return geche.NewRingBuffer[string, string](1000000/numShards + 1) },
+				numShards,
+				&geche.StringMapper{N: numShards},
 			),
 		},
 		{
@@ -123,7 +127,7 @@ func BenchmarkEverythingParallel(b *testing.B) {
 		},
 		{
 			"github.com/erni27/imcache",
-			NewIMCache[string, string](time.Second, imcache.DefaultStringHasher64{}),
+			NewIMCache[string, string](time.Second, imcache.DefaultStringHasher64{}, numShards),
 		},
 		{
 			"github.com/dgraph-io/ristretto",

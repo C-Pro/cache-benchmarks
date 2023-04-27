@@ -14,9 +14,10 @@ type IMCache[K comparable, V any] struct {
 func NewIMCache[K comparable, V any](
 	ttl time.Duration,
 	hasher imcache.Hasher64[K],
+	numShards int,
 ) *IMCache[K, V] {
 	c := imcache.NewSharded(
-		8,
+		numShards,
 		hasher,
 		imcache.WithDefaultExpirationOption[K, V](ttl),
 	)
