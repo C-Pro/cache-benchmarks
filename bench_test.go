@@ -137,6 +137,10 @@ func BenchmarkEverythingParallel(b *testing.B) {
 			"github.com/hashicorp/golang-lru/v2",
 			NewGLRU[string, string](1000000),
 		},
+		{
+			"github.com/egregors/kesh",
+			NewKesh[string, string](1000000),
+		},
 	}
 	data := genTestData(10_000_000)
 	b.ResetTimer()

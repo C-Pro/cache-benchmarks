@@ -4,18 +4,22 @@ I have picked some of the Go cache libraries that have the magic word "generic" 
 
 ```shell
 $ go test -benchtime=30s -benchmem -bench .
-goos: darwin
-goarch: arm64
+goos: linux
+goarch: amd64
 pkg: cache_bench
-BenchmarkEverythingParallel/MapCache-10                 332130052              133.3 ns/op             0 B/op          0 allocs/op
-BenchmarkEverythingParallel/MapTTLCache-10              234690624              205.4 ns/op             0 B/op          0 allocs/op
-BenchmarkEverythingParallel/RingBuffer-10               441694302               86.82 ns/op            0 B/op          0 allocs/op
-BenchmarkEverythingParallel/github.com/Code-Hex/go-generics-cache-10            191366336              198.8 ns/op             7 B/op          0 allocs/op
-BenchmarkEverythingParallel/github.com/Yiling-J/theine-go-10                    367538067              100.7 ns/op             0 B/op          0 allocs/op
-BenchmarkEverythingParallel/github.com/jellydator/ttlcache-10                   136785907              262.4 ns/op            43 B/op          0 allocs/op
-BenchmarkEverythingParallel/github.com/erni27/imcache-10                        226084180              179.2 ns/op             2 B/op          0 allocs/op
-BenchmarkEverythingParallel/github.com/dgraph-io/ristretto-10                   466729495               80.03 ns/op           30 B/op          1 allocs/op
-BenchmarkEverythingParallel/github.com/hashicorp/golang-lru/v2-10               193697901              216.5 ns/op             0 B/op          0 allocs/op
+cpu: Intel(R) Xeon(R) Platinum 8168 CPU @ 2.70GHz
+BenchmarkEverythingParallel/MapCache-32         	223955310	       178.2 ns/op	       0 B/op	       0 allocs/op
+BenchmarkEverythingParallel/MapTTLCache-32      	187183848	       220.0 ns/op	       0 B/op	       0 allocs/op
+BenchmarkEverythingParallel/RingBuffer-32       	202385371	       205.0 ns/op	       0 B/op	       0 allocs/op
+BenchmarkEverythingParallel/ShardedMapCache-32  	610846776	        60.83 ns/op	       0 B/op	       0 allocs/op
+BenchmarkEverythingParallel/ShardedMapTTLCache-32         	632016300	        62.05 ns/op	       0 B/op	       0 allocs/op
+BenchmarkEverythingParallel/ShardedRingBuffer-32          	645748414	        55.06 ns/op	       0 B/op	       0 allocs/op
+BenchmarkEverythingParallel/github.com/Code-Hex/go-generics-cache-32         	131428951	       304.8 ns/op	       7 B/op	       0 allocs/op
+BenchmarkEverythingParallel/github.com/Yiling-J/theine-go-32                 	377735642	        90.43 ns/op	       0 B/op	       0 allocs/op
+BenchmarkEverythingParallel/github.com/jellydator/ttlcache-32                	90392742	       334.8 ns/op	      43 B/op	       0 allocs/op
+BenchmarkEverythingParallel/github.com/erni27/imcache-32                     	1000000000	        19.56 ns/op	       2 B/op	       0 allocs/op
+BenchmarkEverythingParallel/github.com/dgraph-io/ristretto-32                	266648240	       149.3 ns/op	      28 B/op	       1 allocs/op
+BenchmarkEverythingParallel/github.com/hashicorp/golang-lru/v2-32            	100000000	       331.8 ns/op	       0 B/op	       0 allocs/op
+BenchmarkEverythingParallel/github.com/egregors/kesh-32                      	100000000	       372.7 ns/op	      46 B/op	       2 allocs/op
 PASS
-ok      cache_bench     496.390s
 ```

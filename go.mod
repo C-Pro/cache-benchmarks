@@ -12,6 +12,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
 	github.com/dgraph-io/ristretto v0.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
+	github.com/egregors/kesh v0.0.0-20220908135716-aab2149ae6a6 // indirect
 	github.com/erni27/imcache v0.9.0 // indirect
 	github.com/gammazero/deque v0.2.1 // indirect
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
