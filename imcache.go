@@ -45,3 +45,12 @@ func (i *IMCache[K, V]) Del(key K) error {
 
 	return nil
 }
+
+func (i *IMCache[K, V]) Len() int {
+	return i.c.Len()
+}
+
+func (i *IMCache[K, V]) Snapshot() map[K]V {
+	// not used in benchmark
+	return nil
+}

@@ -42,3 +42,12 @@ func (g *gogLRU[K, V]) Del(key K) error {
 
 	return nil
 }
+
+func (g *gogLRU[K, V]) Len() int {
+	return len(g.c.Keys())
+}
+
+func (g *gogLRU[K, V]) Snapshot() map[K]V {
+	// not used in benchmark
+	return nil
+}

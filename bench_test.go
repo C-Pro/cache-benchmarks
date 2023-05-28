@@ -5,12 +5,12 @@ import (
 	"math"
 	"math/rand"
 	"runtime"
-	"strconv"
 	"testing"
 	"time"
 
 	"github.com/c-pro/geche"
 	"github.com/erni27/imcache"
+	"github.com/google/uuid"
 )
 
 const keyCardinality = 1000000
@@ -29,9 +29,13 @@ const (
 )
 
 func genTestData(N int) []testCase {
+	keys := make([]string, keyCardinality)
+	for i := range keys {
+		keys[i] = uuid.NewString()
+	}
 	d := make([]testCase, N)
 	for i := range d {
-		d[i].key = strconv.Itoa(rand.Intn(keyCardinality))
+		d[i].key = keys[rand.Intn(keyCardinality)]
 		r := rand.Float64()
 		switch {
 		case r < 0.9:
@@ -92,7 +96,7 @@ func BenchmarkEverythingParallel(b *testing.B) {
 			geche.NewSharded[string](
 				func() geche.Geche[string, string] { return geche.NewMapCache[string, string]() },
 				numShards,
-				&geche.StringMapper{N: numShards},
+				&geche.StringMapper{},
 			),
 		},
 		{
@@ -102,7 +106,7 @@ func BenchmarkEverythingParallel(b *testing.B) {
 					return geche.NewMapTTLCache[string, string](ctx, time.Second, time.Second)
 				},
 				numShards,
-				&geche.StringMapper{N: numShards},
+				&geche.StringMapper{},
 			),
 		},
 		{
@@ -110,7 +114,7 @@ func BenchmarkEverythingParallel(b *testing.B) {
 			geche.NewSharded[string](
 				func() geche.Geche[string, string] { return geche.NewRingBuffer[string, string](1000000/numShards + 1) },
 				numShards,
-				&geche.StringMapper{N: numShards},
+				&geche.StringMapper{},
 			),
 		},
 		{
@@ -140,6 +144,10 @@ func BenchmarkEverythingParallel(b *testing.B) {
 		{
 			"github.com/egregors/kesh",
 			NewKesh[string, string](1000000),
+		},
+		{
+			"KVMapCache",
+			geche.NewKV[string](geche.NewMapCache[string, string]()),
 		},
 	}
 	data := genTestData(10_000_000)

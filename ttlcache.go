@@ -58,3 +58,12 @@ func (t *TTLCache[K, V]) Del(key K) error {
 
 	return nil
 }
+
+func (t *TTLCache[K, V]) Len() int {
+	return t.c.Len()
+}
+
+func (t *TTLCache[K, V]) Snapshot() map[K]V {
+	// not used in benchmark
+	return nil
+}

@@ -10,7 +10,7 @@ import (
 type Ristretto[K comparable, V any] struct {
 	c    *ristretto.Cache
 	zero V
-	ttl time.Duration
+	ttl  time.Duration
 }
 
 func NewRistretto[K comparable, V any](size int, ttl time.Duration) *Ristretto[K, V] {
@@ -42,5 +42,14 @@ func (r *Ristretto[K, V]) Set(key K, value V) {
 func (r *Ristretto[K, V]) Del(key K) error {
 	r.c.Del(key)
 
+	return nil
+}
+
+func (r *Ristretto[K, V]) Len() int {
+	return int(r.c.Metrics.KeysAdded())
+}
+
+func (r *Ristretto[K, V]) Snapshot() map[K]V {
+	// not used in benchmark
 	return nil
 }

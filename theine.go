@@ -45,3 +45,12 @@ func (t *theineCache[K, V]) Del(key K) error {
 
 	return nil
 }
+
+func (t *theineCache[K, V]) Len() int {
+	return t.c.Len()
+}
+
+func (t *theineCache[K, V]) Snapshot() map[K]V {
+	// not used in benchmark
+	return nil
+}

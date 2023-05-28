@@ -29,3 +29,13 @@ func (i *Kesh[K, V]) Del(key K) error {
 	// Not implemented
 	return nil
 }
+
+func (i *Kesh[K, V]) Len() int {
+	// Not implemented
+	return 0
+}
+
+func (i *Kesh[K, V]) Snapshot() map[K]V {
+	// Not implemented
+	return nil
+}

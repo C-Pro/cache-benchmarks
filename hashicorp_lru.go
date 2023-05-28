@@ -37,3 +37,12 @@ func (g *GLRU[K, V]) Del(key K) error {
 
 	return nil
 }
+
+func (g *GLRU[K, V]) Len() int {
+	return g.c.Len()
+}
+
+func (g *GLRU[K, V]) Snapshot() map[K]V {
+	// not used in benchmark
+	return nil
+}
