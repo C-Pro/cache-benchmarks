@@ -146,14 +146,6 @@ func BenchmarkEverythingParallel(b *testing.B) {
 			NewKesh[string, string](1000000),
 		},
 		{
-			"KVCacheMap(experimental)",
-			NewKVCacheMap[string](),
-		},
-		{
-			"KVCache(experimental)",
-			NewKVCache[string](),
-		},
-		{
 			"KVMapCache",
 			geche.NewKV[string](geche.NewMapCache[string, string]()),
 		},
