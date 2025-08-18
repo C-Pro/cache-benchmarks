@@ -46,3 +46,8 @@ func (g *GLRU[K, V]) Snapshot() map[K]V {
 	// not used in benchmark
 	return nil
 }
+
+func (g *GLRU[K, V]) SetIfPresent(K, V) (V, bool) {
+	// not used in benchmark
+	return g.zero, false
+}

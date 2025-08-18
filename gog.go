@@ -9,8 +9,9 @@ import (
 )
 
 type gogLRU[K comparable, V any] struct {
-	c   *cache.Cache[K, V]
-	ttl time.Duration
+	c    *cache.Cache[K, V]
+	zero V
+	ttl  time.Duration
 }
 
 func NewGogLRU[K comparable, V any](
@@ -50,4 +51,9 @@ func (g *gogLRU[K, V]) Len() int {
 func (g *gogLRU[K, V]) Snapshot() map[K]V {
 	// not used in benchmark
 	return nil
+}
+
+func (g *gogLRU[K, V]) SetIfPresent(K, V) (V, bool) {
+	// not used in benchmark
+	return g.zero, false
 }

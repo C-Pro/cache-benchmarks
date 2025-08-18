@@ -67,3 +67,8 @@ func (t *TTLCache[K, V]) Snapshot() map[K]V {
 	// not used in benchmark
 	return nil
 }
+
+func (t *TTLCache[K, V]) SetIfPresent(K, V) (V, bool) {
+	// not used in benchmark
+	return t.zero, false
+}

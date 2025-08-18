@@ -1,11 +1,11 @@
 module cache_bench
 
-go 1.20
+go 1.24
 
 require (
 	github.com/Code-Hex/go-generics-cache v1.3.0
 	github.com/Yiling-J/theine-go v0.2.0
-	github.com/c-pro/geche v1.0.0-alpha
+	github.com/c-pro/geche v1.4.0
 	github.com/dgraph-io/ristretto v0.1.1
 	github.com/egregors/kesh v0.0.0-20220908135716-aab2149ae6a6
 	github.com/erni27/imcache v0.9.0

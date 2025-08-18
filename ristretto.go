@@ -23,7 +23,10 @@ func NewRistretto[K comparable, V any](size int, ttl time.Duration) *Ristretto[K
 		panic(err)
 	}
 
-	return &Ristretto[K, V]{client, zero[V](), ttl}
+	return &Ristretto[K, V]{
+		c:   client,
+		ttl: ttl,
+	}
 }
 
 func (r *Ristretto[K, V]) Get(key K) (V, error) {
@@ -52,4 +55,9 @@ func (r *Ristretto[K, V]) Len() int {
 func (r *Ristretto[K, V]) Snapshot() map[K]V {
 	// not used in benchmark
 	return nil
+}
+
+func (r *Ristretto[K, V]) SetIfPresent(K, V) (V, bool) {
+	// not used in benchmark
+	return r.zero, false
 }

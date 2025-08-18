@@ -8,8 +8,9 @@ import (
 )
 
 type theineCache[K comparable, V any] struct {
-	c   *theine.Cache[K, V]
-	ttl time.Duration
+	c    *theine.Cache[K, V]
+	ttl  time.Duration
+	zero V
 }
 
 func NewTheine[K comparable, V any](
@@ -53,4 +54,9 @@ func (t *theineCache[K, V]) Len() int {
 func (t *theineCache[K, V]) Snapshot() map[K]V {
 	// not used in benchmark
 	return nil
+}
+
+func (t *theineCache[K, V]) SetIfPresent(K, V) (V, bool) {
+	// not used in benchmark
+	return t.zero, false
 }

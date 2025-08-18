@@ -8,7 +8,8 @@ import (
 )
 
 type IMCache[K comparable, V any] struct {
-	c *imcache.Sharded[K, V]
+	c    *imcache.Sharded[K, V]
+	zero V
 }
 
 func NewIMCache[K comparable, V any](
@@ -23,7 +24,8 @@ func NewIMCache[K comparable, V any](
 	)
 
 	return &IMCache[K, V]{
-		c: c,
+		c:    c,
+		zero: *new(V),
 	}
 }
 
@@ -53,4 +55,9 @@ func (i *IMCache[K, V]) Len() int {
 func (i *IMCache[K, V]) Snapshot() map[K]V {
 	// not used in benchmark
 	return nil
+}
+
+func (i *IMCache[K, V]) SetIfPresent(K, V) (V, bool) {
+	// not used in benchmark
+	return i.zero, false
 }

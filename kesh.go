@@ -5,7 +5,8 @@ import (
 )
 
 type Kesh[K comparable, V any] struct {
-	c *kesh.LRUCache[K, V]
+	c    *kesh.LRUCache[K, V]
+	zero V
 }
 
 func NewKesh[K comparable, V any](
@@ -38,4 +39,9 @@ func (i *Kesh[K, V]) Len() int {
 func (i *Kesh[K, V]) Snapshot() map[K]V {
 	// Not implemented
 	return nil
+}
+
+func (k *Kesh[K, V]) SetIfPresent(K, V) (V, bool) {
+	// not used in benchmark
+	return k.zero, false
 }

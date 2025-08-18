@@ -80,6 +80,10 @@ func BenchmarkEverythingParallel(b *testing.B) {
 		imp  geche.Geche[string, string]
 	}{
 		{
+			"sync.Map",
+			NewSyncMap[string, string](),
+		},
+		{
 			"MapCache",
 			geche.NewMapCache[string, string](),
 		},
@@ -158,5 +162,32 @@ func BenchmarkEverythingParallel(b *testing.B) {
 				benchmarkFuzzParallel(c.imp, data, pb)
 			})
 		})
+	}
+}
+
+func TestSyncMap(t *testing.T) {
+	c := NewSyncMap[string, string]()
+	c.Set("key1", "value1")
+	val, err := c.Get("key1")
+	if err != nil {
+		t.Errorf("Get returned an error: %v", err)
+	}
+	if val != "value1" {
+		t.Errorf("Expected value1, got %s", val)
+	}
+
+	v2, err := c.Get("key2")
+	if err != geche.ErrNotFound {
+		t.Errorf("Expected ErrNotFound, got %v", err)
+	}
+
+	if v2 != "" {
+		t.Errorf("Expected empty value, got %s", v2)
+	}
+
+	c.Del("key1")
+	_, err = c.Get("key1")
+	if err != geche.ErrNotFound {
+		t.Errorf("Expected ErrNotFound after deletion, got %v", err)
 	}
 }
