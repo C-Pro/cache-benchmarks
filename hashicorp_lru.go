@@ -42,6 +42,11 @@ func (g *GLRU[K, V]) Len() int {
 	return g.c.Len()
 }
 
+func (g *GLRU[K, V]) SetIfPresent(key K, value V) (K, bool) {
+	// no-op
+	return key, false
+}
+
 func (g *GLRU[K, V]) Snapshot() map[K]V {
 	// not used in benchmark
 	return nil

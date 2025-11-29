@@ -47,6 +47,11 @@ func (g *gogLRU[K, V]) Len() int {
 	return len(g.c.Keys())
 }
 
+func (g *gogLRU[K, V]) SetIfPresent(key K, value V) (K, bool) {
+	// no-op
+	return key, false
+}
+
 func (g *gogLRU[K, V]) Snapshot() map[K]V {
 	// not used in benchmark
 	return nil

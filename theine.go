@@ -50,6 +50,11 @@ func (t *theineCache[K, V]) Len() int {
 	return t.c.Len()
 }
 
+func (t *theineCache[K, V]) SetIfPresent(key K, value V) (K, bool) {
+	// no-op
+	return key, false
+}
+
 func (t *theineCache[K, V]) Snapshot() map[K]V {
 	// not used in benchmark
 	return nil

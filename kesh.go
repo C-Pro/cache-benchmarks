@@ -35,6 +35,11 @@ func (i *Kesh[K, V]) Len() int {
 	return 0
 }
 
+func (i *Kesh[K, V]) SetIfPresent(key K, value V) (K, bool) {
+	// no-op
+	return key, false
+}
+
 func (i *Kesh[K, V]) Snapshot() map[K]V {
 	// Not implemented
 	return nil

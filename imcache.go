@@ -50,6 +50,11 @@ func (i *IMCache[K, V]) Len() int {
 	return i.c.Len()
 }
 
+func (i *IMCache[K, V]) SetIfPresent(key K, value V) (K, bool) {
+	// no-op
+	return key, false
+}
+
 func (i *IMCache[K, V]) Snapshot() map[K]V {
 	// not used in benchmark
 	return nil

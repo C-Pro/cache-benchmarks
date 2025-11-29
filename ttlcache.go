@@ -63,6 +63,11 @@ func (t *TTLCache[K, V]) Len() int {
 	return t.c.Len()
 }
 
+func (t *TTLCache[K, V]) SetIfPresent(key K, value V) (K, bool) {
+	// no-op
+	return key, false
+}
+
 func (t *TTLCache[K, V]) Snapshot() map[K]V {
 	// not used in benchmark
 	return nil

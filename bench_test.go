@@ -2,15 +2,17 @@ package cache_bench
 
 import (
 	"context"
+	"fmt"
+	"maps"
 	"math"
 	"math/rand"
 	"runtime"
+	"slices"
 	"testing"
 	"time"
 
 	"github.com/c-pro/geche"
 	"github.com/erni27/imcache"
-	"github.com/google/uuid"
 )
 
 const keyCardinality = 1000000
@@ -28,20 +30,60 @@ const (
 	OPDel
 )
 
-func genTestData(N int) []testCase {
-	keys := make([]string, keyCardinality)
-	for i := range keys {
-		keys[i] = uuid.NewString()
+func genRandomString(n int) string {
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = byte(rand.Intn(26) + int(byte('a')))
 	}
+	return string(b)
+}
+
+func genTestData(N int) []testCase {
+	// Generate composite keys with common real-life pattern.
+	// {keyType}:{userID}:{objectID}
+	// This is mostly irrelevant for map-backed caches, but makes a world of difference
+	// for trie-based KV cache.
+	var (
+		numKeyTypes = 20
+		numUsers    = N / 1000
+		// Number of distinct keys controls how much hits/misses we have in the benchmark.
+		// When number of distinct keys >= N, we have mostly misses.
+		distinctKeys = N / 10
+	)
+	keyTypesMap := make(map[string]struct{}, numKeyTypes)
+	for len(keyTypesMap) < numKeyTypes {
+		keyTypesMap[genRandomString(5)] = struct{}{}
+	}
+	keyTypes := slices.Collect(maps.Keys(keyTypesMap))
+
+	usersMap := make(map[string]struct{}, numUsers)
+	for len(usersMap) < numUsers {
+		usersMap[genRandomString(16)] = struct{}{}
+	}
+	users := slices.Collect(maps.Keys(usersMap))
+
+	keysMap := make(map[string]struct{}, distinctKeys)
+	for len(keysMap) < distinctKeys {
+		key := fmt.Sprintf("%s:%s:%s",
+			keyTypes[rand.Intn(len(keyTypes))],
+			users[rand.Intn(len(users))],
+			genRandomString(16),
+		)
+		keysMap[key] = struct{}{}
+	}
+
+	keys := slices.Collect(maps.Keys(keysMap))
+
 	d := make([]testCase, N)
 	for i := range d {
-		d[i].key = keys[rand.Intn(keyCardinality)]
+		d[i].key = keys[rand.Intn(len(keys))]
 		r := rand.Float64()
 		switch {
-		case r < 0.9:
-			d[i].op = OPGet
-		case r >= 0.9 && r < 0.95:
+		// Write heavy, because with read heavy, most of the reads would be misses.
+		case r < 0.7:
 			d[i].op = OPSet
+		case r >= 0.7 && r < 0.95:
+			d[i].op = OPGet
 		case r >= 0.95:
 			d[i].op = OPDel
 		}
@@ -148,6 +190,18 @@ func BenchmarkEverythingParallel(b *testing.B) {
 		{
 			"KVMapCache",
 			geche.NewKV[string](geche.NewMapCache[string, string]()),
+		},
+		{
+			"KVCache",
+			geche.NewKVCache[string, string](),
+		},
+		{
+			"ShardedKVCache",
+			geche.NewSharded(
+				func() geche.Geche[string, string] { return geche.NewKVCache[string, string]() },
+				numShards,
+				&geche.StringMapper{},
+			),
 		},
 	}
 	data := genTestData(10_000_000)

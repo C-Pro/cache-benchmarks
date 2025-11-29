@@ -49,6 +49,11 @@ func (r *Ristretto[K, V]) Len() int {
 	return int(r.c.Metrics.KeysAdded())
 }
 
+func (r *Ristretto[K, V]) SetIfPresent(key K, value V) (K, bool) {
+	// no-op
+	return key, false
+}
+
 func (r *Ristretto[K, V]) Snapshot() map[K]V {
 	// not used in benchmark
 	return nil
