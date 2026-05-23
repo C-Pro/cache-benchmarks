@@ -57,3 +57,16 @@ func (g *gogLRU[K, V]) SetIfPresent(K, V) (V, bool) {
 	// not used in benchmark
 	return g.zero, false
 }
+
+func (g *gogLRU[K, V]) Clear() {
+	for _, k := range g.c.Keys() {
+		g.c.Delete(k)
+	}
+}
+
+func (g *gogLRU[K, V]) SetIfAbsent(K, V) (V, bool) {
+	// not used in benchmark
+	return g.zero, false
+}
+
+

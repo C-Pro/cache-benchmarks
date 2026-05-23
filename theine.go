@@ -60,3 +60,14 @@ func (t *theineCache[K, V]) SetIfPresent(K, V) (V, bool) {
 	// not used in benchmark
 	return t.zero, false
 }
+
+func (t *theineCache[K, V]) Clear() {
+	// Not implemented
+}
+
+func (t *theineCache[K, V]) SetIfAbsent(K, V) (V, bool) {
+	// not used in benchmark
+	return t.zero, false
+}
+
+

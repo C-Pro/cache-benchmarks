@@ -45,3 +45,14 @@ func (k *Kesh[K, V]) SetIfPresent(K, V) (V, bool) {
 	// not used in benchmark
 	return k.zero, false
 }
+
+func (k *Kesh[K, V]) Clear() {
+	// Not implemented
+}
+
+func (k *Kesh[K, V]) SetIfAbsent(K, V) (V, bool) {
+	// not used in benchmark
+	return k.zero, false
+}
+
+

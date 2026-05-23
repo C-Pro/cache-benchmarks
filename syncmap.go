@@ -47,3 +47,14 @@ func (s *SyncMap[K, V]) SetIfPresent(K, V) (V, bool) {
 	// not used in benchmark
 	return s.zero, false
 }
+
+func (s *SyncMap[K, V]) Clear() {
+	s.c.Clear()
+}
+
+func (s *SyncMap[K, V]) SetIfAbsent(K, V) (V, bool) {
+	// not used in benchmark
+	return s.zero, false
+}
+
+

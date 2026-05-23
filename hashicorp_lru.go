@@ -51,3 +51,14 @@ func (g *GLRU[K, V]) SetIfPresent(K, V) (V, bool) {
 	// not used in benchmark
 	return g.zero, false
 }
+
+func (g *GLRU[K, V]) Clear() {
+	g.c.Purge()
+}
+
+func (g *GLRU[K, V]) SetIfAbsent(K, V) (V, bool) {
+	// not used in benchmark
+	return g.zero, false
+}
+
+

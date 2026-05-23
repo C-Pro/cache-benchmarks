@@ -61,3 +61,14 @@ func (i *IMCache[K, V]) SetIfPresent(K, V) (V, bool) {
 	// not used in benchmark
 	return i.zero, false
 }
+
+func (i *IMCache[K, V]) Clear() {
+	i.c.RemoveAll()
+}
+
+func (i *IMCache[K, V]) SetIfAbsent(K, V) (V, bool) {
+	// not used in benchmark
+	return i.zero, false
+}
+
+

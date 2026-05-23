@@ -72,3 +72,14 @@ func (t *TTLCache[K, V]) SetIfPresent(K, V) (V, bool) {
 	// not used in benchmark
 	return t.zero, false
 }
+
+func (t *TTLCache[K, V]) Clear() {
+	t.c.DeleteAll()
+}
+
+func (t *TTLCache[K, V]) SetIfAbsent(K, V) (V, bool) {
+	// not used in benchmark
+	return t.zero, false
+}
+
+

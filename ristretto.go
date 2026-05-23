@@ -61,3 +61,14 @@ func (r *Ristretto[K, V]) SetIfPresent(K, V) (V, bool) {
 	// not used in benchmark
 	return r.zero, false
 }
+
+func (r *Ristretto[K, V]) Clear() {
+	r.c.Clear()
+}
+
+func (r *Ristretto[K, V]) SetIfAbsent(K, V) (V, bool) {
+	// not used in benchmark
+	return r.zero, false
+}
+
+

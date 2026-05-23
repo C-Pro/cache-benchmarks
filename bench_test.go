@@ -96,6 +96,10 @@ func BenchmarkEverythingParallel(b *testing.B) {
 			geche.NewRingBuffer[string, string](1000000),
 		},
 		{
+			"KVCache",
+			geche.NewKVCache[string, string](),
+		},
+		{
 			"ShardedMapCache",
 			geche.NewSharded[string](
 				func() geche.Geche[string, string] { return geche.NewMapCache[string, string]() },
@@ -117,6 +121,14 @@ func BenchmarkEverythingParallel(b *testing.B) {
 			"ShardedRingBuffer",
 			geche.NewSharded[string](
 				func() geche.Geche[string, string] { return geche.NewRingBuffer[string, string](1000000/numShards + 1) },
+				numShards,
+				&geche.StringMapper{},
+			),
+		},
+		{
+			"ShardedKVCache",
+			geche.NewSharded[string](
+				func() geche.Geche[string, string] { return geche.NewKVCache[string, string]() },
 				numShards,
 				&geche.StringMapper{},
 			),
