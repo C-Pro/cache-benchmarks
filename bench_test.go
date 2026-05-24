@@ -125,14 +125,7 @@ func BenchmarkEverythingParallel(b *testing.B) {
 				&geche.StringMapper{},
 			),
 		},
-		{
-			"ShardedKVCache",
-			geche.NewSharded[string](
-				func() geche.Geche[string, string] { return geche.NewKVCache[string, string]() },
-				numShards,
-				&geche.StringMapper{},
-			),
-		},
+
 		{
 			"github.com/Code-Hex/go-generics-cache",
 			NewGogLRU[string, string](ctx, time.Second, time.Second),

@@ -6,6 +6,7 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/armon/go-radix"
 	"github.com/c-pro/geche"
 	"github.com/google/uuid"
 	iradix "github.com/hashicorp/go-immutable-radix"
@@ -44,45 +45,6 @@ type kvCache interface {
 }
 
 // ----------------- Wrappers -----------------
-
-// ShardedKVCache is a sharded version of geche.KVCache
-type ShardedKVCache struct {
-	shards []*geche.KVCache[string, string]
-	mapper geche.Mapper[string]
-}
-
-func NewShardedKVCache(numShards int) *ShardedKVCache {
-	shards := make([]*geche.KVCache[string, string], numShards)
-	for i := range shards {
-		shards[i] = geche.NewKVCache[string, string]()
-	}
-	return &ShardedKVCache{
-		shards: shards,
-		mapper: &geche.StringMapper{},
-	}
-}
-
-func (s *ShardedKVCache) Set(key, value string) {
-	shardIdx := s.mapper.Map(key, len(s.shards))
-	s.shards[shardIdx].Set(key, value)
-}
-
-func (s *ShardedKVCache) Get(key string) (string, error) {
-	shardIdx := s.mapper.Map(key, len(s.shards))
-	return s.shards[shardIdx].Get(key)
-}
-
-func (s *ShardedKVCache) ListByPrefix(prefix string) ([]string, error) {
-	var res []string
-	for _, shard := range s.shards {
-		vals, err := shard.ListByPrefix(prefix)
-		if err != nil {
-			return nil, err
-		}
-		res = append(res, vals...)
-	}
-	return res, nil
-}
 
 // RadixCache wraps hashicorp/go-immutable-radix to be mutable and thread-safe
 type RadixCache struct {
@@ -123,42 +85,42 @@ func (r *RadixCache) ListByPrefix(prefix string) ([]string, error) {
 	return res, nil
 }
 
-// ShardedRadixCache shards RadixCache
-type ShardedRadixCache struct {
-	shards []*RadixCache
-	mapper geche.Mapper[string]
+// ArmonRadixCache wraps armon/go-radix to be thread-safe
+type ArmonRadixCache struct {
+	mux sync.RWMutex
+	t   *radix.Tree
 }
 
-func NewShardedRadixCache(numShards int) *ShardedRadixCache {
-	shards := make([]*RadixCache, numShards)
-	for i := range shards {
-		shards[i] = NewRadixCache()
-	}
-	return &ShardedRadixCache{
-		shards: shards,
-		mapper: &geche.StringMapper{},
+func NewArmonRadixCache() *ArmonRadixCache {
+	return &ArmonRadixCache{
+		t: radix.New(),
 	}
 }
 
-func (s *ShardedRadixCache) Set(key, value string) {
-	shardIdx := s.mapper.Map(key, len(s.shards))
-	s.shards[shardIdx].Set(key, value)
+func (r *ArmonRadixCache) Set(key, value string) {
+	r.mux.Lock()
+	defer r.mux.Unlock()
+	r.t.Insert(key, value)
 }
 
-func (s *ShardedRadixCache) Get(key string) (string, error) {
-	shardIdx := s.mapper.Map(key, len(s.shards))
-	return s.shards[shardIdx].Get(key)
+func (r *ArmonRadixCache) Get(key string) (string, error) {
+	r.mux.RLock()
+	defer r.mux.RUnlock()
+	val, ok := r.t.Get(key)
+	if !ok {
+		return "", geche.ErrNotFound
+	}
+	return val.(string), nil
 }
 
-func (s *ShardedRadixCache) ListByPrefix(prefix string) ([]string, error) {
+func (r *ArmonRadixCache) ListByPrefix(prefix string) ([]string, error) {
+	r.mux.RLock()
+	defer r.mux.RUnlock()
 	var res []string
-	for _, shard := range s.shards {
-		vals, err := shard.ListByPrefix(prefix)
-		if err != nil {
-			return nil, err
-		}
-		res = append(res, vals...)
-	}
+	r.t.WalkPrefix(prefix, func(s string, v interface{}) bool {
+		res = append(res, v.(string))
+		return false
+	})
 	return res, nil
 }
 
@@ -179,25 +141,9 @@ func getCaches() []struct {
 			},
 		},
 		{
-			name: "KVMapCacheSharded",
-			factory: func() kvCache {
-				return geche.NewKV[string](geche.NewSharded[string](
-					func() geche.Geche[string, string] { return geche.NewMapCache[string, string]() },
-					numShards,
-					&geche.StringMapper{},
-				))
-			},
-		},
-		{
 			name: "KVCache",
 			factory: func() kvCache {
 				return geche.NewKVCache[string, string]()
-			},
-		},
-		{
-			name: "KVCacheSharded",
-			factory: func() kvCache {
-				return NewShardedKVCache(numShards)
 			},
 		},
 		{
@@ -207,9 +153,9 @@ func getCaches() []struct {
 			},
 		},
 		{
-			name: "ImmutableRadixSharded",
+			name: "ArmonRadix",
 			factory: func() kvCache {
-				return NewShardedRadixCache(numShards)
+				return NewArmonRadixCache()
 			},
 		},
 	}
@@ -268,5 +214,3 @@ func BenchmarkKV_ListByPrefix(b *testing.B) {
 		})
 	}
 }
-
-
